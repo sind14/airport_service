@@ -1,3 +1,4 @@
 .idea
 .venvpython
 **__pycache__
+db.sqlite3

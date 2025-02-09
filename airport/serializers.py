@@ -43,6 +43,19 @@ class RouteSerializer(serializers.ModelSerializer):
         model = Route
         fields = ["id", "source", "destination", "distance"]
 
+    def create(self, validated_data):
+        source_city = validated_data.pop("source")["closest_big_city"]
+        destination_city = validated_data.pop("destination")["closest_big_city"]
+        source_airport = Airport.objects.get(closest_big_city=source_city)
+        destination_airport = Airport.objects.get(closest_big_city=destination_city)
+        route = Route.objects.create(
+            source=source_airport,
+            destination=destination_airport,
+            **validated_data
+        )
+
+        return route
+
 
 class FlightSerializer(serializers.ModelSerializer):
     crew = CrewSerializer(many=True)

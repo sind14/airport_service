@@ -12,7 +12,7 @@ from airport.serializers import (
     AirportListSerializer,
     AirplaneTypeListSerializer,
     RouteListSerializer,
-    FlightListSerializer, FlightCreateSerializer,
+    FlightListSerializer, FlightCreateSerializer, FlightDetailSerializer,
 )
 
 
@@ -45,7 +45,9 @@ class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
     def get_serializer_class(self):
         if self.action == "list":
-            serializer_class = FlightListSerializer
-            return serializer_class
-        serializer_class = FlightCreateSerializer
-        return serializer_class
+            return FlightListSerializer
+
+        if self.action == "retrieve":
+            return FlightDetailSerializer
+
+        return FlightCreateSerializer

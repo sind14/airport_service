@@ -4,7 +4,7 @@ from airport.models import (
     Airplane,
     Airport,
     AirplaneType,
-    Route,
+    Route, Flight,
 )
 from airport.serializers import (
     CrewListSerializer,
@@ -12,6 +12,7 @@ from airport.serializers import (
     AirportListSerializer,
     AirplaneTypeListSerializer,
     RouteListSerializer,
+    FlightListSerializer, FlightCreateSerializer,
 )
 
 
@@ -38,3 +39,13 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
     serializer_class = RouteListSerializer
+
+
+class FlightViewSet(viewsets.ModelViewSet):
+    queryset = Flight.objects.all()
+    def get_serializer_class(self):
+        if self.action == "list":
+            serializer_class = FlightListSerializer
+            return serializer_class
+        serializer_class = FlightCreateSerializer
+        return serializer_class

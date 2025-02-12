@@ -5,7 +5,8 @@ from airport.views import (
     AirplaneViewSet,
     AirportViewSet,
     AirplaneTypeViewSet,
-    RouteViewSet
+    RouteViewSet,
+    FlightViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -14,6 +15,7 @@ router.register("airplane_list", AirplaneViewSet)
 router.register("airport_list", AirportViewSet)
 router.register("airplane_type_list", AirplaneTypeViewSet)
 router.register("route_list", RouteViewSet)
+router.register("flight_list", FlightViewSet)
 
 urlpatterns = [path("", include(router.urls))]
 

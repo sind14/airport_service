@@ -1,4 +1,7 @@
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+
 from airport.models import (
     Crew,
     Airplane,
@@ -6,13 +9,16 @@ from airport.models import (
     AirplaneType,
     Route, Flight,
 )
+from airport.permissions import IsStuffOrReadOnly
 from airport.serializers import (
     CrewListSerializer,
     AirplaneListSerializer,
     AirportListSerializer,
     AirplaneTypeListSerializer,
     RouteListSerializer,
-    FlightListSerializer, FlightCreateSerializer, FlightDetailSerializer,
+    FlightListSerializer,
+    FlightCreateSerializer,
+    FlightDetailSerializer,
 )
 
 
@@ -43,6 +49,8 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsStuffOrReadOnly,)
     def get_serializer_class(self):
         if self.action == "list":
             return FlightListSerializer

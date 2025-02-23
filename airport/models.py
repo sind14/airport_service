@@ -1,5 +1,8 @@
+import pathlib
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 
 class AirplaneType(models.Model):
@@ -21,11 +24,17 @@ class Airport(models.Model):
     closest_big_city = models.CharField(max_length=100)
 
 
+def airplane_image_path(instance, filename):
+    filename = f"{slugify(instance.name)}-{uuid.uuid4()}" + pathlib.Path(filename).suffix
+    return pathlib.Path("upload/airplanes/") / pathlib.Path(filename)
+
+
 class Airplane(models.Model):
     name = models.CharField(max_length=100)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
     airplane_type = models.ForeignKey(AirplaneType, on_delete=models.CASCADE)
+    image = models.ImageField(null=True, upload_to=airplane_image_path)
 
 
 class Route(models.Model):

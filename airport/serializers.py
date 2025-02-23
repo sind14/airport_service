@@ -83,7 +83,7 @@ class FlightDetailSerializer(serializers.ModelSerializer):
 class OrderListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ["id", "created_at", "user"]
+        fields = ["id", "created_at", "user", "tickets"]
 
 
 class TicketListSerializer(serializers.ModelSerializer):

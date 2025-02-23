@@ -9,7 +9,7 @@ from airport.models import (
     Airplane,
     Airport,
     AirplaneType,
-    Route, Flight,
+    Route, Flight, Order,
 )
 from airport.permissions import IsStuffOrReadOnly, IsAdminOrStuffReadOnly
 from airport.serializers import (
@@ -21,7 +21,7 @@ from airport.serializers import (
     FlightListSerializer,
     FlightCreateSerializer,
     FlightDetailSerializer,
-    AirplaneImageSerializer,
+    AirplaneImageSerializer, OrderListSerializer,
 )
 
 
@@ -93,3 +93,8 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightDetailSerializer
 
         return FlightCreateSerializer
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderListSerializer

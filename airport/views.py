@@ -1,7 +1,7 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, request
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from airport.models import (
@@ -98,6 +98,8 @@ class FlightViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderListSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

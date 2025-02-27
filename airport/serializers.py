@@ -59,7 +59,7 @@ class FlightListSerializer(serializers.ModelSerializer):
     departure_time = serializers.DateTimeField()
     class Meta:
         model = Flight
-        fields = ["airplane", "route", "departure_time", "arrival_time", "crew"]
+        fields = ["id", "airplane", "route", "departure_time", "arrival_time", "crew"]
 
 
 class FlightCreateSerializer(serializers.ModelSerializer):
@@ -80,13 +80,21 @@ class FlightDetailSerializer(serializers.ModelSerializer):
         fields = ["id", "airplane", "route", "departure_time", "arrival_time", "crew"]
 
 
+class TicketListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ["id", "row", "seat", "flight"]
+
+
 class OrderListSerializer(serializers.ModelSerializer):
+    tickets = TicketListSerializer(many=True, read_only=False, allow_empty=False)
     class Meta:
         model = Order
         fields = ["id", "created_at", "tickets"]
 
-
-class TicketListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ticket
-        fields = ["id", "row", "seat", "flight", "order"]
+    def create(self, validated_data):
+        tickets_data = validated_data.pop("tickets")
+        order = Order.objects.create(**validated_data)
+        for ticket_data in tickets_data:
+            Ticket.objects.create(order=order, **ticket_data)
+        return order

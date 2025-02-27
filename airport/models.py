@@ -2,7 +2,9 @@ import pathlib
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import UniqueConstraint
 from django.utils.text import slugify
+from rest_framework.exceptions import ValidationError
 
 
 class AirplaneType(models.Model):
@@ -56,3 +58,26 @@ class Ticket(models.Model):
     seat = models.IntegerField()
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="tickets")
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=["row", "seat", "flight"], name="unique_ticket_seat_flight")
+        ]
+
+    def clean(self):
+        if self.flight and self.flight.airplane:
+            max_rows = self.flight.airplane.rows
+            max_seats = self.flight.airplane.seats_in_row
+
+            errors = {}
+            if not (1 <= self.row <= max_rows):
+                errors["row"] = f"Row must be in range [1, {max_rows}]"
+            if not (1 <= self.seat <= max_seats):
+                errors["seat"] = f"Seat must be in range [1, {max_seats}]"
+
+            if errors:
+                raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
